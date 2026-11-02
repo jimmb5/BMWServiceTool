@@ -33,6 +33,7 @@ internal static class Program
         Run("Tool32 draft has reference fields, DIY flag, no erase and no executable export", Draft);
         Run("ENET loopback accepts TCP but receives zero application bytes", Network);
         Run("ENET rejects invalid targets and honors cancellation", InvalidNetwork);
+        Run("Tool32 inspection reads INI and file presence without altering files", InstallationInspection);
         Run("WPF form saves, reloads, validates and previews drafts", () => Ui(args.FirstOrDefault()));
         Console.WriteLine($"\n{_passed} passed; {_failed} failed.");
         // Only our uniquely named test directory is removed.
@@ -211,6 +212,41 @@ internal static class Program
         Throws<OperationCanceledException>(() => EnetConnection.CheckAsync("127.0.0.1", cancellationToken: cancellation.Token).GetAwaiter().GetResult());
     }
 
+    private static void InstallationInspection()
+    {
+        var root = Path.Combine(TempRoot, "ediabas");
+        var bin = Path.Combine(root, "BIN");
+        var ecu = Path.Combine(root, "ECU");
+        Directory.CreateDirectory(bin);
+        Directory.CreateDirectory(ecu);
+        var tool = Path.Combine(bin, "Tool32.exe");
+        // Invalid EXE bytes are deliberately inspected as data, never executed.
+        File.WriteAllText(tool, "synthetic test file");
+        var ini = Path.Combine(bin, "EDIABAS.INI");
+        var text = $"; fixture\n[Configuration]\nInterface = ENET ; comment\nEcuPath = \"{ecu}\"\n[Other]\nInterface = DO_NOT_USE\n";
+        File.WriteAllText(ini, text);
+        File.WriteAllText(Path.Combine(ecu, "nbtevo.prg"), "fixture");
+        var report = EdiabasInspection.Inspect(tool);
+        Assert(report.Interface == "ENET");
+        Assert(report.EcuDirectory == ecu);
+        Assert(report.Files.Single(f => f.Name == "nbtevo.prg").Exists);
+        Assert(!report.Files.Single(f => f.Name == "api32.dll").Exists);
+        Assert(report.Tool32Architecture == "Ei tunnistettava Windows PE -tiedosto");
+        Assert(File.ReadAllText(ini) == text && File.ReadAllText(tool) == "synthetic test file");
+        File.WriteAllText(ini, "[Configuration]\nEcuPath=..\\ECU\n");
+        report = EdiabasInspection.Inspect(tool);
+        Assert(report.EcuDirectory == "" && report.Files.All(f => !f.Name.EndsWith(".prg")));
+        Assert(EdiabasInspection.Inspect(tool, ecu).EcuDirectory == ecu);
+        File.WriteAllText(ini, "[Configuration]\nEcuPath=\\\\server\\share\n");
+        Assert(EdiabasInspection.Inspect(tool).EcuDirectory == "");
+        File.WriteAllText(ini, "[Configuration]\nInterface=ENET\nInterface=STD:OBD\n");
+        Throws<ValidationException>(() => EdiabasInspection.Inspect(tool));
+        File.Delete(ini);
+        Assert(EdiabasInspection.Inspect(tool).EcuDirectory == ecu);
+        foreach (var invalid in new[] { "", "Tool32.exe", "C:Tool32.exe", "\\\\server\\share\\Tool32.exe", "C:\\fake\\other.exe" })
+            Throws<ValidationException>(() => EdiabasInspection.Inspect(invalid));
+    }
+
     private static void Ui(string? screenshotDirectory)
     {
         var application = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
@@ -226,6 +262,8 @@ internal static class Program
         void Click(string name) => Find<Button>(name).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         try
         {
+            Click("InspectInstallationButton");
+            Assert(Find<TextBox>("InstallationReport").Text.Contains("Valitse paikallinen"));
             Find<TextBox>("MileageBox").Text = "not a number";
             Click("SaveButton");
             Assert(Find<TextBlock>("DateMileageError").Text.Length > 0 && store.Load().Entries.Count == 0);

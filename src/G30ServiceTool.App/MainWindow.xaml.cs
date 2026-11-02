@@ -184,6 +184,24 @@ public partial class MainWindow : Window
     }
     private void Adapters_Click(object sender, RoutedEventArgs e) => RefreshAdapters();
 
+    private void BrowseTool32_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog { Title = "Valitse tällä läppärillä oleva Tool32.exe", Filter = "Tool32 (Tool32.exe)|Tool32.exe" };
+        if (dialog.ShowDialog(this) == true) Tool32PathBox.Text = dialog.FileName;
+    }
+
+    private void BrowseEcu_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFolderDialog { Title = "Valitse diagnostiikan ECU-kansio" };
+        if (dialog.ShowDialog(this) == true) EcuPathBox.Text = dialog.FolderName;
+    }
+
+    private void InspectInstallation_Click(object sender, RoutedEventArgs e) => Guard(() =>
+    {
+        InstallationReport.Text = EdiabasInspection.Inspect(Tool32PathBox.Text, EcuPathBox.Text).ToText();
+        StatusText.Text = "Paikalliset Tool32-tiedostot tarkistettu. Autoyhteyttä ei avattu.";
+    }, error => InstallationReport.Text = error);
+
     private void ExportBackup_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new SaveFileDialog { Title = "Vie paikallinen huoltokirja", Filter = "Huoltokirja (*.json)|*.json", DefaultExt = ".json", AddExtension = true, FileName = $"g30-backup-{DateTime.Now:yyyyMMdd-HHmmss}.json" };

@@ -14,6 +14,8 @@ Näistä havainnoista ei seuraa, että `nbtevo.prg` hyväksyisi saman rivin tai 
 
 ## Ennen historian lukua
 
+v0.1.1 lisää paikallisen asennustarkistuksen sillä koneella, jossa Tool32 sijaitsee. Tarkistus lukee valitun EXE:n PE-otsikon, saman kansion EDIABAS.INI:n Configuration-osion Interface/EcuPath-arvot ja raportoi valitun ECU-kansion tiedostojen löytymisen. Se ei lataa DLL-tiedostoja tai suorita jobeja. Tiedoston olemassaolo ei vahvista yhteensopivuutta. Seuraavaksi tarvitaan Tool32-läppärillä tuotettu raportti ja oman auton yksikkötiedot.
+
 - Selvitä autosta keskusyksikön tyyppi ja ohjelmistotunniste. Mallivuosi yksin ei vahvista yksikköä.
 - Käytä käyttäjän laillisesti hankkiman EDIABAS-asennuksen omia SGBD/PRG-kuvauksia. Älä sisällytä BMW:n tiedostoja repoon.
 - Dokumentoi tunnistuksen ja historian lukemisen jobit, argumentit, tulokset ja virhetilanteet. Lukuadapteriin ei saa liittää kirjoitusjobia.

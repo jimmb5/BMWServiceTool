@@ -1,6 +1,6 @@
 # G30 Service Tool
 
-Suomenkielinen Windows-sovellus oman BMW G30:n (2018) huoltojen kirjaamiseen. Versio **0.1.0**.
+Suomenkielinen Windows-sovellus oman BMW G30:n (2018) huoltojen kirjaamiseen. Versio **0.1.1**.
 
 ## Käynnistä
 
@@ -28,9 +28,21 @@ dotnet run --project src/G30ServiceTool.App -c Release --no-build
 - Aiemman tiedoston automaattinen varmuuskopio ennen muutosta ja atominen päähuoltokirjan korvaus.
 - JSON-varmuuskopion vienti sekä lisäävä yhdistäminen. Tunnisteristiriita keskeyttää yhdistämisen.
 - Oman koneen aktiiviset IPv4-sovittimet ja käsin annetun IP-osoitteen TCP-yhteystesti.
+- Tool32-läppärin paikallisten tiedostojen tarkistus: EXE-rakenne, INI:n Interface/EcuPath ja valitun kansion PRG/GRP-tiedostot.
 - Valitun merkinnän Tool32-tarkasteluluonnos `.txt`-tiedostona.
 
 Sovellus käyttää yhtä paikallista huoltokirjaa tälle autolle. Automaattista VIN-tunnistusta tai usean auton erottelua ei vielä ole. Älä yhdistä toisen auton tietoja tähän huoltokirjaan.
+
+## Jos Tool32 on toisella läppärillä
+
+Siirrä `artifacts/G30ServiceTool-win-x64.zip` Tool32-läppärille, pura se kokonaan ja avaa siellä `G30ServiceTool.exe`. Vaihtoehtoisesti siirrä koko `artifacts/app`-kansio. `./scripts/build.ps1 -SelfContained` muodostaa Windows x64 -paketin, jossa on myös .NET-ajoympäristö. Ilman tätä valintaa läppärillä pitää olla .NET 9 Desktop Runtime. Paketissa on lyhyt `ALOITA-TASTA.txt`-ohje.
+
+1. Avaa **Yhteys ja Tool32** -välilehti.
+2. Valitse **Selaa…** ja kyseisen koneen `Tool32.exe`.
+3. Anna ECU-kansio tarvittaessa, esimerkiksi jos INI:n `EcuPath` on suhteellinen tai tiedostot ovat muualla.
+4. Paina **Tarkista paikalliset tiedostot**. Raportin voi kopioida keskusteluun.
+
+Tämä tarkistus ei tarvitse autoa. Se ei käynnistä Tool32:ta, lataa DLL:ää tai muuta EDIABAS-asetuksia. `nbtevo.prg`-tiedoston löytyminen tarkoittaa vain, että tiedosto on valitussa kansiossa; auton yksikköä ja huoltojobien tukea ei ole vielä tunnistettu. Suhteellisia tai UNC-muotoisia ECU-polkuja ei seurata automaattisesti. Tarkistus käsittelee vain valitun Tool32:n vieressä olevan INI:n, ei järjestelmän kaikkia mahdollisia EDIABAS-asennuksia.
 
 ## Autolle kirjoittamisen tila
 

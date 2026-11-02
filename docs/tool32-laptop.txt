@@ -1,0 +1,21 @@
+G30 SERVICE TOOL 0.1.1 – TOOL32-LÄPPÄRIN TARKISTUS
+
+1. Pura ZIP-paketti kokonaan omaan kansioonsa. Älä aja EXEä ZIPin sisältä.
+2. Avaa G30ServiceTool.exe. Itsenäinen Windows x64 -paketti sisältää .NETin.
+3. Valitse Yhteys ja Tool32 -välilehti.
+4. Valitse Selaa… ja tällä läppärillä oleva Tool32.exe.
+5. Jos tiedät ECU-kansion sijainnin, voit valita sen erikseen. Muuten jätä tyhjäksi.
+6. Paina Tarkista paikalliset tiedostot.
+7. Kopioi raportti (napsauta raporttikenttää, Ctrl+A, Ctrl+C) ja liitä keskusteluun.
+
+Autoa ei tarvitse kytkeä tätä tarkistusta varten. Ohjelma lukee tiedostojen
+olemassaolon, EXE-otsikon ja muutaman INI-asetuksen. Se ei käynnistä Tool32:ta,
+lataa EDIABAS-DLL:ää, muuta asetuksia tai lähetä autolle mitään.
+
+PRG-tiedoston löytyminen ei vielä tunnista auton keskusyksikköä tai todista
+huoltohistorian lukemisen/kirjoittamisen toimivuutta. Seuraava toteutusvaihe
+päätetään raportin ja autosta erikseen selvitettävien yksikkötietojen perusteella.
+
+Älä siirrä toisen auton paikallista huoltokirjaa tämän auton tietoihin.
+Tällä koneella kirjatut huollot tallentuvat Windows-käyttäjän kansioon:
+%LOCALAPPDATA%\G30ServiceTool\history.json

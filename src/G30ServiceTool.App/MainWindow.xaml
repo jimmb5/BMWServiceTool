@@ -105,9 +105,19 @@
      </Grid>
     </Grid>
    </TabItem>
-   <TabItem Header="_ENET-yhteys">
+   <TabItem Header="_Yhteys ja Tool32">
     <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,18,0,0">
      <StackPanel MaxWidth="780" HorizontalAlignment="Left">
+      <Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
+       <TextBlock Text="Tool32-asennuksen tarkistus" Style="{StaticResource Heading}" />
+       <TextBlock Text="Tee tarkistus sillä läppärillä, jolle Tool32 on asennettu. Valitse Tool32.exe ja tarvittaessa ECU-kansio. Auton tai ENET-kaapelin ei tarvitse olla kytkettynä." Style="{StaticResource Muted}" Margin="0,0,0,18" />
+       <Label Content="Tool32.exe-tiedosto" Target="{Binding ElementName=Tool32PathBox}" />
+       <DockPanel><Button DockPanel.Dock="Right" Content="Selaa…" Click="BrowseTool32_Click" Margin="10,0,0,0" /><TextBox x:Name="Tool32PathBox" AutomationProperties.Name="Tool32.exe-tiedoston polku" /></DockPanel>
+       <Label Content="ECU-kansio (valinnainen, ohittaa tarkistuksessa INI-polun)" Target="{Binding ElementName=EcuPathBox}" Margin="0,14,0,0" />
+       <DockPanel><Button DockPanel.Dock="Right" Content="Valitse…" Click="BrowseEcu_Click" Margin="10,0,0,0" /><TextBox x:Name="EcuPathBox" AutomationProperties.Name="Tarkistettava ECU-kansio" /></DockPanel>
+       <Button x:Name="InspectInstallationButton" Content="Tarkista paikalliset tiedostot" HorizontalAlignment="Left" Click="InspectInstallation_Click" Margin="0,16,0,12" />
+       <TextBox x:Name="InstallationReport" Text="Asennusta ei ole tarkistettu." IsReadOnly="True" TextWrapping="Wrap" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MinHeight="70" MaxHeight="300" AutomationProperties.Name="Tool32-asennuksen tarkistusraportti" AutomationProperties.LiveSetting="Polite" />
+      </StackPanel></Border>
       <Border Style="{StaticResource Card}"><StackPanel>
        <TextBlock Text="Tarkista verkkoyhteys" Style="{StaticResource Heading}" />
        <TextBlock Text="Kytke ENET-kaapeli ja auton virrat. Anna auton IP-osoite, jonka olet varmistanut esimerkiksi diagnostiikkaohjelmasta. Oman tietokoneen IP-osoite näkyy alempana." Style="{StaticResource Muted}" Margin="0,0,0,20" />
@@ -159,7 +169,7 @@
        <TextBlock Text="Yhdistäminen lisää puuttuvat merkinnät ja säilyttää nykyiset. Ristiriitaiset tiedot keskeyttävät tuonnin. Vioittunutta päähuoltokirjaa ei korvata automaattisesti: säilytä se ja tarkista ensin backups-kansion kopiot." Style="{StaticResource Muted}" FontSize="12" />
       </StackPanel></Border>
       <Border Style="{StaticResource Card}" Margin="0,16,0,0"><StackPanel>
-       <TextBlock Text="Versio 0.1.0" FontSize="18" FontWeight="SemiBold" />
+       <TextBlock Text="Versio 0.1.1" FontSize="18" FontWeight="SemiBold" />
        <TextBlock Text="Itsenäinen harrasteprojekti omaan BMW G30 (2018) -autoon. Sovellus tallentaa paikallisia merkintöjä ja tuottaa NBT-lähteeseen perustuvan Tool32-tarkasteluluonnoksen. Se ei päivitä iDrivea tai BMW:n keskitettyä huoltokantaa eikä nollaa CBS-huoltovälejä." Style="{StaticResource Muted}" Margin="0,12,0,0" />
        <TextBlock Text="Seuraava vaihe: oman keskusyksikön ja ohjelmistoversion tunnistus, dokumentoitu historian luku sekä varmennettu lisäävä kirjoitus EDIABAS-rajapinnalla. BMW-ohjelmistoja tai PRG-tiedostoja ei jaella tämän projektin mukana." Style="{StaticResource Muted}" Margin="0,12,0,0" />
       </StackPanel></Border>
