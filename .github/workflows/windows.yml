@@ -1,0 +1,36 @@
+name: Windows build and tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Build and test
+        shell: pwsh
+        run: ./scripts/test.ps1
+      - name: Publish Windows application
+        shell: pwsh
+        run: ./scripts/build.ps1 -SelfContained
+      - name: Upload application
+        uses: actions/upload-artifact@v4
+        with:
+          name: G30ServiceTool-win-x64
+          path: artifacts/app/
+      - name: Upload UI verification renders
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: UI-verification
+          path: artifacts/qa/
+          if-no-files-found: ignore

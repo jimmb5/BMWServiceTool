@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+.vs/
+.idea/
+artifacts/
+.cache/
+*.user
+*.suo
+# Vehicle records, backups and diagnostics are personal data.
+data/
+backups/
+history*.json
+*.tool32-draft.txt
+TestResults/

@@ -1,0 +1,174 @@
+<Window x:Class="G30ServiceTool.App.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="G30 Service Tool · Huoltokirja" Width="1240" Height="900" MinWidth="980" MinHeight="650"
+ WindowStartupLocation="CenterScreen" Language="fi-FI">
+ <Grid>
+  <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+  <Border Background="#14253A" Padding="30,24">
+   <Grid>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <StackPanel>
+     <TextBlock Text="OMA HUOLTOKIRJA" FontSize="11" Foreground="#AFC3DE" FontWeight="SemiBold" />
+     <TextBlock Text="G30 Service Tool" Foreground="White" FontSize="30" FontWeight="SemiBold" Margin="0,4,0,5" />
+     <TextBlock Text="BMW 5-sarja · G30 · 2018" Foreground="#C1CDE0" />
+    </StackPanel>
+    <Border Grid.Column="1" Background="#253D59" CornerRadius="6" Padding="16,10" VerticalAlignment="Center">
+     <StackPanel><TextBlock Text="PAIKALLINEN HUOLTOKIRJA" FontSize="11" Foreground="#C1CDE0" />
+      <TextBlock Text="Autolle kirjoitus ei käytössä" Foreground="White" Margin="0,4,0,0" /></StackPanel>
+    </Border>
+   </Grid>
+  </Border>
+  <TabControl x:Name="MainTabs" Grid.Row="1" Margin="24,20,24,16">
+   <TabItem Header="_Huoltokirja">
+    <Grid Margin="0,18,0,0">
+     <Grid.ColumnDefinitions><ColumnDefinition Width="430" /><ColumnDefinition Width="20" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+     <Border Style="{StaticResource Card}" Padding="0">
+      <Grid>
+       <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+      <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="24">
+       <StackPanel>
+        <TextBlock Text="Uusi huoltomerkintä" Style="{StaticResource Heading}" />
+        <TextBlock Text="Kirjaa itse tekemäsi huollot talteen." Style="{StaticResource Muted}" Margin="0,0,0,20" />
+        <Grid>
+         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+         <StackPanel>
+          <Label Content="Huolto_päivä" Target="{Binding ElementName=DateBox}" />
+          <DatePicker x:Name="DateBox" SelectedDateFormat="Short" AutomationProperties.Name="Huoltopäivä" />
+         </StackPanel>
+         <StackPanel Grid.Column="2">
+          <Label Content="_Kilometrilukema" Target="{Binding ElementName=MileageBox}" />
+          <TextBox x:Name="MileageBox" MaxLength="12" AutomationProperties.Name="Kilometrilukema" />
+         </StackPanel>
+        </Grid>
+        <TextBlock x:Name="DateMileageError" Foreground="#A82620" Margin="0,6,0,0" AutomationProperties.LiveSetting="Assertive" />
+        <Label Content="Tehdyt huollot" Margin="0,16,0,8" />
+        <StackPanel x:Name="ServiceChoices" />
+        <TextBlock x:Name="ItemsError" Foreground="#A82620" AutomationProperties.LiveSetting="Assertive" />
+        <Label Content="Huollon _ajankohtaisuus" Target="{Binding ElementName=TimingBox}" Margin="0,14,0,0" />
+        <ComboBox x:Name="TimingBox" AutomationProperties.Name="Huollon ajankohtaisuus" />
+        <TextBlock Text="Valittu tila koskee kaikkia tämän merkinnän huoltoja." Style="{StaticResource Muted}" FontSize="12" Margin="0,6,0,14" />
+        <Label Content="Omat _muistiinpanot" Target="{Binding ElementName=NotesBox}" />
+        <TextBox x:Name="NotesBox" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" Height="86" MaxLength="4000" AutomationProperties.Name="Omat muistiinpanot" />
+        <TextBlock Text="Esimerkiksi öljylaatu, määrä ja käyttämäsi varaosat." Style="{StaticResource Muted}" FontSize="12" Margin="0,6,0,16" />
+       </StackPanel>
+      </ScrollViewer>
+       <Border Grid.Row="1" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,14">
+        <StackPanel>
+         <Button x:Name="SaveButton" Content="_Tallenna huoltokirjaan" Style="{StaticResource Primary}" Click="Save_Click" />
+         <TextBlock x:Name="FormMessage" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+       </Border>
+      </Grid>
+     </Border>
+     <Grid Grid.Column="2">
+      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="16" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+      <Border Style="{StaticResource Card}">
+       <Grid>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock Text="MERKINTÖJÄ" Style="{StaticResource Muted}" FontSize="11" /><TextBlock x:Name="EntryCount" Text="0" FontSize="30" FontWeight="SemiBold" Margin="0,4,0,0" /></StackPanel>
+        <StackPanel Grid.Column="1"><TextBlock Text="VIIMEISIN LUKEMA" Style="{StaticResource Muted}" FontSize="11" /><TextBlock x:Name="LatestMileage" Text="—" FontSize="26" FontWeight="SemiBold" Margin="0,6,0,0" /></StackPanel>
+       </Grid>
+      </Border>
+      <Border Grid.Row="2" Style="{StaticResource Card}" Padding="20">
+       <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+       <Grid MinHeight="380">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <Grid><TextBlock Text="Huoltohistoria" Style="{StaticResource Heading}" /><Button x:Name="RefreshButton" Content="Päivitä" HorizontalAlignment="Right" Click="Refresh_Click" Padding="10,5" MinHeight="30" /></Grid>
+        <TextBlock Grid.Row="1" Text="Tälle tietokoneelle tallennetut merkinnät. Valitse merkintä nähdäksesi lisätiedot." Style="{StaticResource Muted}" Margin="0,0,0,14" />
+        <Grid Grid.Row="2">
+         <ListBox x:Name="HistoryList" MinHeight="160" MaxHeight="360" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionChanged="History_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Paikallinen huoltohistoria">
+          <ListBox.ItemTemplate><DataTemplate>
+           <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="4,12">
+            <StackPanel>
+             <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+              <TextBlock Text="{Binding DateLabel}" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="{Binding MileageLabel}" FontWeight="SemiBold" />
+             </Grid>
+             <TextBlock Text="{Binding ItemsLabel}" Margin="0,7,0,4" TextWrapping="Wrap" />
+             <TextBlock Text="{Binding TimingLabel}" FontSize="12" Foreground="{StaticResource MutedInk}" />
+            </StackPanel>
+           </Border>
+          </DataTemplate></ListBox.ItemTemplate>
+         </ListBox>
+         <StackPanel x:Name="EmptyState" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="300" IsHitTestVisible="False">
+          <TextBlock Text="Ensimmäinen huolto talteen" FontSize="19" FontWeight="SemiBold" TextAlignment="Center" />
+          <TextBlock Text="Täytä viereinen lomake. Merkinnät säilyvät koneellasi myös ilman yhteyttä autoon." Style="{StaticResource Muted}" TextAlignment="Center" Margin="0,10,0,0" />
+         </StackPanel>
+        </Grid>
+        <StackPanel Grid.Row="3" Margin="0,14,0,0">
+         <TextBox x:Name="SelectedNotes" IsReadOnly="True" TextWrapping="Wrap" MaxHeight="110" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="{StaticResource Page}" AutomationProperties.Name="Valitun merkinnän muistiinpanot" />
+         <Button x:Name="ShowDraftButton" Content="Avaa Tool32-luonnos" Margin="0,10,0,0" HorizontalAlignment="Left" Click="ShowDraft_Click" IsEnabled="False" />
+        </StackPanel>
+       </Grid>
+       </ScrollViewer>
+      </Border>
+     </Grid>
+    </Grid>
+   </TabItem>
+   <TabItem Header="_ENET-yhteys">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,18,0,0">
+     <StackPanel MaxWidth="780" HorizontalAlignment="Left">
+      <Border Style="{StaticResource Card}"><StackPanel>
+       <TextBlock Text="Tarkista verkkoyhteys" Style="{StaticResource Heading}" />
+       <TextBlock Text="Kytke ENET-kaapeli ja auton virrat. Anna auton IP-osoite, jonka olet varmistanut esimerkiksi diagnostiikkaohjelmasta. Oman tietokoneen IP-osoite näkyy alempana." Style="{StaticResource Muted}" Margin="0,0,0,20" />
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="120" /></Grid.ColumnDefinitions>
+        <StackPanel><Label Content="Auton IPv4-_osoite" Target="{Binding ElementName=HostBox}" /><TextBox x:Name="HostBox" MaxLength="15" AutomationProperties.Name="Auton IPv4-osoite" /></StackPanel>
+        <StackPanel Grid.Column="2"><Label Content="TCP-portti" Target="{Binding ElementName=PortBox}" /><TextBox x:Name="PortBox" Text="6801" MaxLength="5" AutomationProperties.Name="TCP-portti" /></StackPanel>
+       </Grid>
+       <TextBlock Text="6801 on HSFZ:n tavallinen portti. DoIP käyttää yleensä porttia 13400. Portin vastaaminen ei vahvista protokollaa tai huoltohistorian tukea." Style="{StaticResource Muted}" Margin="0,10,0,16" />
+       <Button x:Name="CheckButton" Content="Tarkista TCP-yhteys" HorizontalAlignment="Left" Click="CheckConnection_Click" />
+       <TextBlock x:Name="ConnectionMessage" Text="Yhteyttä ei ole testattu." Margin="0,14,0,0" AutomationProperties.LiveSetting="Polite" />
+      </StackPanel></Border>
+      <Border Style="{StaticResource Card}" Margin="0,16,0,0"><StackPanel>
+       <TextBlock Text="Tietokoneen verkkosovittimet" FontSize="18" FontWeight="SemiBold" />
+       <TextBlock x:Name="AdaptersText" Style="{StaticResource Muted}" Margin="0,12,0,12" />
+       <Button Content="Päivitä sovittimet" HorizontalAlignment="Left" Click="Adapters_Click" />
+      </StackPanel></Border>
+      <TextBlock Text="Testi avaa ja sulkee TCP-yhteyden. Diagnostiikkaviestejä ei lähetetä. Testi ei lue VIN-tunnusta, auton kilometrejä, akkujännitettä tai huoltohistoriaa." Style="{StaticResource Muted}" Margin="6,18,6,0" />
+     </StackPanel>
+    </ScrollViewer>
+   </TabItem>
+   <TabItem Header="Tool32-_luonnos">
+    <Grid Margin="0,18,0,0">
+     <Grid.ColumnDefinitions><ColumnDefinition Width="320" /><ColumnDefinition Width="20" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Card}"><StackPanel>
+      <TextBlock Text="Valmistele merkintä" Style="{StaticResource Heading}" />
+      <TextBlock Text="Valitse ensin huoltohistoriasta tallennettu merkintä." Style="{StaticResource Muted}" />
+      <TextBlock x:Name="DraftEntryLabel" Text="Merkintää ei ole valittu." FontWeight="SemiBold" Margin="0,18,0,18" />
+      <Label Content="Korjaamo_tunnus" Target="{Binding ElementName=WorkshopBox}" />
+      <TextBox x:Name="WorkshopBox" MaxLength="8" TextChanged="Workshop_Changed" AutomationProperties.Name="Vahvistettava korjaamotunnus" />
+      <TextBlock Text="1–8 numeroa. Tunnuksen merkitys ja oikea arvo on tarkistettava auton job-kuvauksesta. Itse tehtyä huoltoa ei merkitä BMW-merkkihuolloksi." Style="{StaticResource Muted}" FontSize="12" Margin="0,8,0,20" />
+      <Button x:Name="ExportDraftButton" Content="Tallenna luonnos (.txt)" Click="ExportDraft_Click" IsEnabled="False" />
+      <Border Background="#FFF3DA" BorderBrush="#C19A42" BorderThickness="1" Padding="14" CornerRadius="6" Margin="0,20,0,0">
+       <TextBlock Text="NBT EVO -tuki on vahvistamatta. Luonnos on tarkoitettu tekniseen tarkastukseen; sitä ei voi suorittaa Tool32-testinä. Autolle kirjoittaminen lisätään vasta erikseen testattuna." Foreground="#674410" />
+      </Border>
+     </StackPanel></Border></ScrollViewer>
+     <Border Grid.Column="2" Style="{StaticResource Card}" Padding="16">
+      <TextBox x:Name="DraftPreview" Text="Valitse merkintä Huoltokirja-välilehdeltä ja anna korjaamotunnus." IsReadOnly="True" FontFamily="Consolas" FontSize="13" TextWrapping="NoWrap" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" BorderThickness="0" AutomationProperties.Name="Tool32-luonnoksen esikatselu" />
+     </Border>
+    </Grid>
+   </TabItem>
+   <TabItem Header="_Varmuuskopiot ja tiedot">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,18,0,0">
+     <StackPanel MaxWidth="840" HorizontalAlignment="Left">
+      <Border Style="{StaticResource Card}"><StackPanel>
+       <TextBlock Text="Huoltokirja omalla koneellasi" Style="{StaticResource Heading}" />
+       <TextBlock Text="Aiemmasta paikallisesta huoltokirjasta tehdään varmuuskopio ennen jokaista muutosta. Kopiot ovat samalla levyllä: vie lisäksi kopio toiselle levylle. Nämä kopiot eivät sisällä autosta luettua huoltohistoriaa." Style="{StaticResource Muted}" />
+       <TextBox x:Name="StoragePath" IsReadOnly="True" TextWrapping="Wrap" Margin="0,18,0,16" AutomationProperties.Name="Huoltokirjan tallennuskansio" />
+       <WrapPanel><Button Content="Vie varmuuskopio (.json)" Click="ExportBackup_Click" Margin="0,0,10,10" /><Button Content="Yhdistä varmuuskopio" Click="ImportBackup_Click" Margin="0,0,10,10" /><Button Content="Avaa tallennuskansio" Click="OpenFolder_Click" Margin="0,0,0,10" /></WrapPanel>
+       <TextBlock Text="Yhdistäminen lisää puuttuvat merkinnät ja säilyttää nykyiset. Ristiriitaiset tiedot keskeyttävät tuonnin. Vioittunutta päähuoltokirjaa ei korvata automaattisesti: säilytä se ja tarkista ensin backups-kansion kopiot." Style="{StaticResource Muted}" FontSize="12" />
+      </StackPanel></Border>
+      <Border Style="{StaticResource Card}" Margin="0,16,0,0"><StackPanel>
+       <TextBlock Text="Versio 0.1.0" FontSize="18" FontWeight="SemiBold" />
+       <TextBlock Text="Itsenäinen harrasteprojekti omaan BMW G30 (2018) -autoon. Sovellus tallentaa paikallisia merkintöjä ja tuottaa NBT-lähteeseen perustuvan Tool32-tarkasteluluonnoksen. Se ei päivitä iDrivea tai BMW:n keskitettyä huoltokantaa eikä nollaa CBS-huoltovälejä." Style="{StaticResource Muted}" Margin="0,12,0,0" />
+       <TextBlock Text="Seuraava vaihe: oman keskusyksikön ja ohjelmistoversion tunnistus, dokumentoitu historian luku sekä varmennettu lisäävä kirjoitus EDIABAS-rajapinnalla. BMW-ohjelmistoja tai PRG-tiedostoja ei jaella tämän projektin mukana." Style="{StaticResource Muted}" Margin="0,12,0,0" />
+      </StackPanel></Border>
+     </StackPanel>
+    </ScrollViewer>
+   </TabItem>
+  </TabControl>
+  <Border Grid.Row="2" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="26,10">
+   <TextBlock x:Name="StatusText" Text="Valmis · Tiedot tallennetaan vain tälle tietokoneelle." FontSize="12" Foreground="{StaticResource MutedInk}" AutomationProperties.LiveSetting="Polite" />
+  </Border>
+ </Grid>
+</Window>
