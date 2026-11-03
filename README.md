@@ -2,6 +2,12 @@
 
 Suomenkielinen Windows-sovellus oman BMW G30:n (2018) huoltojen kirjaamiseen. Versio **0.1.1**.
 
+## Lataa valmis Windows-ohjelma
+
+**[Lataa G30ServiceTool.exe](https://github.com/jimmb5/BMWServiceTool/releases/download/v0.1.1/G30ServiceTool.exe)**
+
+Lataa EXE ja avaa se Windows x64 -koneella. .NET-ajoympäristö on mukana: kääntämistä tai ZIPin purkamista ei tarvita. GitHubin lähdekoodin ZIP sisältää kehitystiedostot; valmis ohjelma löytyy yllä olevasta linkistä ja Releases-osiosta.
+
 ## Käynnistä
 
 Jos `artifacts/app/G30ServiceTool.exe` on jo rakennettu, avaa se tai kaksoisnapsauta projektin `Kaynnista.cmd`-tiedostoa. Pidä sovelluksen julkaisutiedostot samassa kansiossa.
